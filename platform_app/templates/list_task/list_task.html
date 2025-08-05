@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'platform_app/css/list-task.css' %}">
+{% endblock %}
+{% block title %}To-Do-List{% endblock%}
+{% block body%}
+    <nav class="navbar">
+        <ul class="nav-list">
+            <li><a href="{% url 'task_create' %}">Criar Tarefa</a></li>
+            <li><a href="{% url 'task_list' %}">Minhas Tarefas</a></li>
+            <li><a href="{% url 'logout' %}">Sair</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1>Minhas tarefas</h1>
+        {% for task in tasks %}
+        <div class="container-itens">
+            <h1>{{task.title}}</h1>
+            <p>{{task.description}}</p>
+            {% if task.status == 'P'%}
+                <div class="status-btn"><h2>Pendente</h2></div>
+            {% elif task.status == 'C'%}
+                <div class="status-btn"><h2>Concluído</h2></div>
+            {% elif task.status == 'D'%}
+                <div class="status-btn"><h2>Excluido</h2></div>
+            {% endif %}
+            <P><a href="{% url 'task_complete' task.id %}">concluir</a> <a href="{% url 'task_update' task.id %}">editar</a> <a href="{% url 'task_delete' task.id %}">excluir</a></P>
+        </div>
+        {%endfor%}
+    </div>
+{% endblock %}

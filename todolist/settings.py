@@ -27,7 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'authentication'
+    'authentication',
+    'platform_app',
 ]
 
 MIDDLEWARE = [
@@ -118,6 +119,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #Authetication
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/auth/logar/'
+
+LOGIN_REDIRECT_URL = '/tasks/listar-tarefas/'
 
 LOGOUT_REDIRECT_URL = '/login/'
