@@ -3,12 +3,18 @@ from django.conf import settings
 
 
 class Task(models.Model):
-    choices = (('D', "deletado"), ('P', "pendente"), ('C', "concluida"))
+    STATUS_CHOICES = (
+        ('D', "Deletado"),
+        ('P', "Pendente"),
+        ('C', "Concluída"),
+    )
+
     title = models.CharField(max_length=20)
     description = models.CharField(max_length=100)
-    status = choices
+    tatus = models.CharField(max_length=1, choices=STATUS_CHOICES, default='P')
     usuario = models.ForeignKey(
-        settings.AUTH_USER_MODELS,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='tasks')
+        related_name='tasks'
+    )
     
