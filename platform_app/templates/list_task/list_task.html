@@ -21,11 +21,21 @@
             {% if task.status == 'P'%}
                 <div class="status-btn"><h2>Pendente</h2></div>
             {% elif task.status == 'C'%}
-                <div class="status-btn"><h2>Concluído</h2></div>
+                <div class="status-btn" style="background-color: chartreuse;"><h2>Concluído</h2></div>
             {% elif task.status == 'D'%}
                 <div class="status-btn"><h2>Excluido</h2></div>
             {% endif %}
-            <P><a href="{% url 'task_complete' task.id %}">concluir</a> <a href="{% url 'task_update' task.id %}">editar</a> <a href="{% url 'task_delete' task.id %}">excluir{{task.id}}</a></P>
+            <P>
+                {% if task.status == 'P'%}
+                    <a href="{% url 'task_complete' task.id %}">concluir</a> 
+                    <a href="{% url 'task_update' task.id %}">editar</a> 
+                    <a href="{% url 'task_delete' task.id %}">excluir</a></P>
+                {% elif task.status == 'C' %}
+                    <a href="{% url 'task_pending' task.id %}">Tornar Pendente</a> 
+                    <a href="{% url 'task_update' task.id %}">editar</a> 
+                    <a href="{% url 'task_delete' task.id %}">excluir</a>
+                {% endif %}
+            </P>
         </div>
         {%endfor%}
     </div>

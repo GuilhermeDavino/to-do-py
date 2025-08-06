@@ -26,29 +26,55 @@ class TaskCreate(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
     
     
-class TaskUpdate(LoginRequiredMixin, UpdateView):
-    model = Task
-    template_name = 'task_update'
-    success_url = reverse_lazy('task_list')
+class TaskUpdate(LoginRequiredMixin, View):
+    def get(self, request, id):
+        task = get_object_or_404(Task, id=id, user=request.user)
+        return render(request, 'update_task/update_task.html', {'task': task})
+
+    def post(self, request, id):
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        status = request.POST.get('status')
+        
+        task = get_object_or_404(Task, id=id, user=request.user)
+        
+        if(title != '' and title != task.title):
+            task.title = title
+        
+        if(description != '' and description != task.description):
+            task.description = description
+        
+        task.save()
+        return redirect('task_list')
 
 
-class TaskDelete(LoginRequiredMixin, DeleteView):
-    model = Task
-    template_name = 'task_delete'
-    success_url = reverse_lazy('task_list')
+class TaskDelete(LoginRequiredMixin, View):
+    def get(self, request, id):
+        task = get_object_or_404(Task, id=id, user=request.user)
+        task.delete()
+        return redirect('task_list')
 
-    def get_queryset(self):
-        return Task.objects.filter(id=self.kwargs['pk'])
 
 
 
 class CompleteTask(LoginRequiredMixin, View):
-    def post(self, request, pk):
-        task = get_object_or_404(Task, pk=pk, user=request.user)
+    def get(self, request, id):
+        task = get_object_or_404(Task, id=id, user=request.user)
         if task.status != 'C':
             task.status = 'C'
             task.save()
         return redirect('task_list')
+    
+
+class PendenteTask(LoginRequiredMixin, View):
+    def get(self, request, id):
+        task = get_object_or_404(Task, id=id, user=request.user)
+        if task.status != 'P':
+            task.status = 'P'
+            task.save()
+        return redirect('task_list')
+
+
 
 
 
