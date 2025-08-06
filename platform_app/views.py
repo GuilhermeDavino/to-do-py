@@ -12,7 +12,7 @@ class ListTasks(LoginRequiredMixin, ListView):
     context_object_name = 'tasks'
 
     def get_queryset(self):
-        return Task.objects.filter(user=self.request.user)
+        return Task.objects.filter(user=self.request.user).order_by('-created_at')
     
 
 class TaskCreate(LoginRequiredMixin, CreateView):
