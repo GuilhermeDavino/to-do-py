@@ -17,7 +17,9 @@
         {% for task in tasks %}
         <div class="container-itens">
             <h1>{{task.title}}</h1>
-            <p>{{task.description}}</p>
+            <div class="description-container">
+                <p>{{task.description}}</p>
+            </div>
             {% if task.status == 'P'%}
                 <div class="status-btn"><h2>Pendente</h2></div>
             {% elif task.status == 'C'%}
