@@ -121,6 +121,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/auth/logar/'
 
-LOGIN_REDIRECT_URL = '/tasks/listar-tarefas/'
-
-LOGOUT_REDIRECT_URL = '/login/'
+LOGOUT_REDIRECT_URL = '/auth/logar'

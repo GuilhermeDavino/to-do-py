@@ -25,7 +25,7 @@
             {% elif task.status == 'D'%}
                 <div class="status-btn"><h2>Excluido</h2></div>
             {% endif %}
-            <P><a href="{% url 'task_complete' task.id %}">concluir</a> <a href="{% url 'task_update' task.id %}">editar</a> <a href="{% url 'task_delete' task.id %}">excluir</a></P>
+            <P><a href="{% url 'task_complete' task.id %}">concluir</a> <a href="{% url 'task_update' task.id %}">editar</a> <a href="{% url 'task_delete' task.id %}">excluir{{task.id}}</a></P>
         </div>
         {%endfor%}
     </div>

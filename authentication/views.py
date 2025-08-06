@@ -1,19 +1,67 @@
-from django.shortcuts import render
-from django.urls import reverse_lazy
-from django.views.generic.edit import CreateView
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.views import LoginView
-
+from django.shortcuts import redirect, render
+from django.views import View
+from django.contrib.auth.models import User
+from django.contrib import auth
 # Create your views here.
 
-class Login(LoginView):
-    template_name = 'login/login.html'
-    redirect_authenticated_user = True
+class Login(View):
+    
+    def get(self, request):
+        if request.user.is_authenticated: 
+            return redirect('/tasks/listar-tarefas/')
+        return render(request, 'login/login.html')
+    
+    def post(self, request):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        print(username + " " + password)
+        user = auth.authenticate(username=username, password=password)
+        print(user)
+        if not user:
+            print("not")
+            return redirect('/auth/logar')
+        else:
+            auth.login(request, user)
+            print("sucesso")
+            return redirect('/tasks/listar-tarefas')
+    
 
-class Register(CreateView):
-    form_class = UserCreationForm
-    template_name = 'register/register.html'
-    success_url = reverse_lazy('login')
+
+class Register(View):
+
+    def get(self, request):
+        if request.user.is_authenticated: 
+            return redirect('/tasks/listar-tarefas')
+        return render(request, 'register/register.html')
+
+
+    def post(self, request):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+         
+        if(len(username.strip()) == 0 or len(password.strip()) == 0):
+            return redirect('/auth/cadastro')
+         
+        user = User.objects.filter(username=username)
+
+        if user.exists():
+            return redirect('/auth/cadastro')
+        
+        try:
+            User.objects.create_user(username=username, password=password)
+            return redirect('/tasks/listar-tarefas/')
+        except:
+            return redirect('/auth/cadastro')
+        
+
+
+class LogOut(View):
+    def get(self, request):
+        auth.logout(request)
+        return redirect('/auth/logar')
+
+
+
 
 
 
