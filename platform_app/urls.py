@@ -8,4 +8,5 @@ urlpatterns = [
     path('atualizar-tarefa/<int:id>/', views.TaskUpdate.as_view(), name='task_update'),
     path('deletar-tarefa/<int:id>/', views.TaskDelete.as_view(), name='task_delete'),
     path('completar-tarefa/<int:id>/', views.CompleteTask.as_view(), name='task_complete'),
+    path('pendenciar-tarefa/<int:id>/', views.PendingTask.as_view(), name='task_pending')
 ]

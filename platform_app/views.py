@@ -34,7 +34,6 @@ class TaskUpdate(LoginRequiredMixin, View):
     def post(self, request, id):
         title = request.POST.get('title')
         description = request.POST.get('description')
-        status = request.POST.get('status')
         
         task = get_object_or_404(Task, id=id, user=request.user)
         
@@ -66,7 +65,7 @@ class CompleteTask(LoginRequiredMixin, View):
         return redirect('task_list')
     
 
-class PendenteTask(LoginRequiredMixin, View):
+class PendingTask(LoginRequiredMixin, View):
     def get(self, request, id):
         task = get_object_or_404(Task, id=id, user=request.user)
         if task.status != 'P':
