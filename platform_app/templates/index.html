@@ -1,0 +1,250 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="{% static 'platform_app/css/style.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .task-card {
+            border-left: 6px solid transparent;
+            transition: transform 0.2s ease;
+        }
+
+        .task-card:hover {
+            transform: scale(1.02);
+        }
+
+        .priority-baixa {
+            border-color: #198754;
+        }
+
+        .priority {
+            border-color: blue;
+        }
+
+        .priority-media {
+            border-color: #ffc107;
+        }
+
+        .priority-alta {
+            border-color: #dc3545;
+        }
+
+        .status-concluida {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .status-atrasada {
+            background-color: #ffe5e5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-4">
+        <h1 class="text-center mb-4">📋 Minhas Tarefas</h1>
+
+        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#taskModal"
+            onclick="openCreateModal()">+ Nova Tarefa</button>
+
+        <div class="row g-3">
+            <!-- Exemplo de tarefa, você pode repetir/adaptar -->
+            <div class="col-md-4">
+                <div class="card task-card priority-media">
+                    <div class="card-body">
+                        <h5 class="card-title">Apresentação do Projeto</h5>
+                        <p class="card-text">Finalizar slides e enviar para equipe.</p>
+                        <span class="badge bg-danger">Alta</span>
+                        <span class="badge bg-primary">Trabalho</span>
+                        <p class="mt-2"><strong>Status:</strong> Pendente</p>
+                        <p><strong>Prazo:</strong> 10/08/2025</p>
+                        <button class="btn btn-sm btn-warning" onclick="openEditModal()">Editar</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteTask(this)">Excluir</button>
+                    </div>
+                </div>
+            </div>
+            {% for task in tasks %}
+            <div class="col-md-4">
+                {% if task.priority == "Alta" %}
+                <div class="card task-card priority-alta" id="task-{{ task.id }}">
+                    {% elif task.priority == "Média" %}
+                    <div class="card task-card priority-media" id="task-{{ task.id }}">
+                        {% elif task.priority == "Baixa" %}
+                        <div class="card task-card priority-baixa" id="task-{{ task.id }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{task.title}}</h5>
+                                <p class="card-text">{{task.description}}</p>
+                                {% if task.priority == "Alta" %}
+                                <span class="badge bg-danger">{{task.priority}}</span>
+                                {% elif task.priority == "Média" %}
+                                <span class="badge bg-warning text-dark">{{task.priority}}</span>
+                                {% elif task.priority == "Baixa" %}
+                                <span class="badge bg-success">{{task.priority}}</span>
+                                {% endif %}
+                                {% if task.category == "T" %}
+                                <span class="badge bg-primary">{{task.task.get_category_display}}</span>
+                                {% elif task.category == "E" %}
+                                <span class="badge bg-info text-dark">{{task.task.get_category_display}}</span>
+                                {% elif task.category == "P" %}
+                                <span class="badge bg-secondary">{{task.get_category_display}}</span>
+                                {% endif %}
+                                <p class="mt-2"><strong>Status:</strong> {{task.get_status_display}}</p>
+                                <p><strong>Prazo:</strong> {{ task.deadline|date:"d/m/Y" }}</p>
+                                <button class="btn btn-sm btn-warning"
+                                    onclick="openEditModal('{{task.id}}')">Editar</button>
+                                <button class="btn btn-sm btn-danger"
+                                    onclick="deleteTask('{{task.id}}')">Excluir</button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor%}
+                    <!-- ... outras tarefas ... -->
+                </div>
+            </div>
+            <!-- ... cria tarefa ... -->
+            <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <form method="post" action="{% url 'task_create' %}" class="modal-content">
+                        {% csrf_token %}
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="createTaskModalLabel">Nova Tarefa</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Fechar"></button>
+                        </div>
+                        <div class="modal-body">
+                            {{ create_form.as_p }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- atulizar -->
+            <div class="modal fade" id="updateTaskModal" tabindex="-1" aria-labelledby="updateTaskModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <form method="post" id="updateTaskForm" class="modal-content" action="">
+                        {% csrf_token %}
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="updateTaskModalLabel">Editar Tarefa</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Fechar"></button>
+                        </div>
+                        <div class="modal-body">
+                            {{ update_form.as_p }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Atualizar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
+                let editMode = false;
+                let editingCard = null;
+
+                function openCreateModal() {
+                    const form = document.querySelector('#createTaskModal form');
+                    form.reset(); // limpa o formulário (opcional)
+
+                    // Exibe o modal
+                    const modal = new bootstrap.Modal(document.getElementById('createTaskModal'));
+                    modal.show();
+                }
+
+                function openEditModal(taskId) {
+                    // Ajusta a URL do form para enviar para o update da tarefa correta
+                    const form = document.getElementById('updateTaskForm');
+                    const urlBase = "{% url 'task_update' 0 %}".slice(0, -2); // remove "0/"
+                    form.action = urlBase + taskId + '/';
+
+                    // Exibe o modal
+                    const modal = new bootstrap.Modal(document.getElementById('updateTaskModal'));
+                    modal.show();
+                }
+
+                function submitTask(event) {
+                    event.preventDefault();
+
+                    const title = document.getElementById('title').value;
+                    const description = document.getElementById('description').value;
+                    const priority = document.getElementById('priority').value;
+                    const category = document.getElementById('category').value;
+                    const status = document.getElementById('status').value;
+                    const deadline = document.getElementById('deadline').value;
+
+                    if (editMode && editingCard) {
+                        // Atualizar a tarefa no cartão
+                        editingCard.querySelector('.card-title').textContent = title;
+                        editingCard.querySelector('.card-text').textContent = description;
+
+                        const badges = editingCard.querySelectorAll('span.badge');
+                        badges[0].textContent = priority;
+                        badges[1].textContent = category;
+
+                        editingCard.querySelector('p:nth-child(4)').innerHTML = `<strong>Status:</strong> ${status}`;
+                        editingCard.querySelector('p:nth-child(5)').innerHTML = `<strong>Prazo:</strong> ${deadline.split('-').reverse().join('/')}`;
+
+                        // Ajustar classes de prioridade
+                        editingCard.classList.remove('priority-baixa', 'priority-media', 'priority-alta');
+                        editingCard.classList.add('priority-' + priority.toLowerCase());
+
+                        // Ajustar classes de status
+                        editingCard.classList.remove('status-concluida', 'status-atrasada');
+                        if (status === 'Concluída') editingCard.classList.add('status-concluida');
+                        else if (status === 'Atrasada') editingCard.classList.add('status-atrasada');
+
+                    } else {
+                        // Criar um novo cartão
+                        const container = document.querySelector('.row.g-3');
+                        const col = document.createElement('div');
+                        col.className = 'col-md-4';
+                        col.innerHTML = `
+            <div class="card task-card priority-${priority.toLowerCase()} ${status === 'Concluída' ? 'status-concluida' : ''} ${status === 'Atrasada' ? 'status-atrasada' : ''}">
+                <div class="card-body">
+                    <h5 class="card-title">${title}</h5>
+                    <p class="card-text">${description}</p>
+                    <span class="badge bg-${priority === 'Alta' ? 'danger' : priority === 'Média' ? 'warning text-dark' : 'success'}">${priority}</span>
+                    <span class="badge bg-${category === 'Trabalho' ? 'primary' : category === 'Estudos' ? 'info text-dark' : 'secondary'}">${category}</span>
+                    <p class="mt-2"><strong>Status:</strong> ${status}</p>
+                    <p><strong>Prazo:</strong> ${deadline.split('-').reverse().join('/')}</p>
+                    <button class="btn btn-sm btn-warning" onclick="openEditModal(this)">Editar</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteTask(this)">Excluir</button>
+                </div>
+            </div>
+          `;
+                        container.appendChild(col);
+                    }
+
+                    // Fechar modal após salvar
+                    const modalEl = document.getElementById('taskModal');
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    modal.hide();
+                }
+
+                function deleteTask(button, taskId) {
+                    if (confirm('Deseja realmente excluir esta tarefa?')) {
+                        const cardCol = button.closest('.col-md-4');
+                        cardCol.remove();
+                    }
+                }
+            </script>
+</body>
+
+</html>

@@ -32,6 +32,8 @@
                     <a href="{% url 'task_complete' task.id %}">concluir</a> 
                     <a href="{% url 'task_update' task.id %}">editar</a> 
                     <a href="{% url 'task_delete' task.id %}">excluir</a></P>
+                    <P>Prazo: {{ task.deadline|date:"j \\d\\e F \\d\\e Y" }}</P>
+                    <p>Prioridade: {{task.priority}}</p>
                 {% elif task.status == 'C' %}
                     <a href="{% url 'task_pending' task.id %}">Tornar Pendente</a> 
                     <a href="{% url 'task_update' task.id %}">editar</a> 

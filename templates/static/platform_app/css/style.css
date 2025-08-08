@@ -1,0 +1,37 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.task-card {
+    border-left: 6px solid transparent;
+    transition: transform 0.2s ease;
+}
+
+.task-card:hover {
+    transform: scale(1.02);
+}
+
+.priority-baixa {
+    border-color: #198754;
+}
+
+.priority {
+    border-color: blue;
+}
+
+.priority-media {
+    border-color: #ffc107;
+}
+
+.priority-alta {
+    border-color: #dc3545;
+}
+
+.status-concluida {
+    opacity: 0.6;
+    text-decoration: line-through;
+}
+
+.status-atrasada {
+    background-color: #ffe5e5;
+}
