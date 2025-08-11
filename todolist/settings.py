@@ -21,7 +21,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    #'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authentication',
     'platform_app',
+    'usuario',
 ]
 
 MIDDLEWARE = [
@@ -122,3 +123,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/auth/logar/'
 
 LOGOUT_REDIRECT_URL = '/auth/logar'
+
+#Login
+
+AUTH_USER_MODEL = 'usuario.Usuario'

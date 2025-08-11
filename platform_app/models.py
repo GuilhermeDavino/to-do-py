@@ -20,7 +20,7 @@ class Task(models.Model):
     priority = models.CharField(max_length=6, choices=PriorityChoices.choices, default=PriorityChoices.MEDIA)
     category = models.CharField(max_length=12, choices=CategoryChoices.choices, default=CategoryChoices.PESSOAL)
     created_at = models.DateTimeField(default=timezone.now)
-    deadline = models.DateField(default=datetime.date.today())
+    deadline = models.DateField(default=timezone.now)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
