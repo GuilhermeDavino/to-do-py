@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+from datetime import date
 # Create your models here.
 
 class Usuario(AbstractUser):
@@ -24,6 +25,11 @@ class Usuario(AbstractUser):
     cpf = models.CharField(unique=True, max_length=16)
     tipo_usuario = models.CharField(max_length=1, choices=TIPO_USUARIO_CHOICES, default='C')
     username = models.CharField(max_length=10, default="username", unique=False)
+
+    @property
+    def idade(self):
+        today = date.today()
+        return today.year - self.data_nascimento.year - ((today.month, today.day) < (self.data_nascimento.month, self.data_nascimento.day))
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['nome', 'data_nascimento', 'sexo', 'endereco', 'cpf', 'tipo_usuario']

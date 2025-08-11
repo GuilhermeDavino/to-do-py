@@ -7,6 +7,9 @@ from django.views.generic import (
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from .models import Usuario
 from .forms import UsuarioCreateForm, UsuarioUpdateForm
+from datetime import date
+from django.db.models import Count
+import json
 
 
 
@@ -71,4 +74,52 @@ class UsuarioDeleteView(SuperUserRequiredMixin, DeleteView):
     model = Usuario
     template_name = 'usuarios/deletar.html'
     success_url = reverse_lazy('gerenciamento')
-    
+
+
+
+class UsuarioDashBoardView(SuperUserRequiredMixin, ListView):
+    model = Usuario
+    template_name = 'dashboard.html'
+    context_object_name = 'usuarios'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        usuarios_qs = self.get_queryset()
+
+        # 1. Usuários para AG-Grid
+        usuarios_data = []
+        for u in usuarios_qs:
+            usuarios_data.append({
+                'nome': u.nome,
+                'email': u.email,
+                'sexo': u.get_sexo_display(),
+                'cpf': u.cpf,
+                'data_nascimento': u.data_nascimento.strftime('%Y-%m-%d'),
+                'idade': u.idade  # Usando a propriedade idade
+            })
+
+        # 2. Gráfico de sexo (rosca)
+        sexo_counts = usuarios_qs.values('sexo').annotate(count=Count('sexo'))
+        sexo_labels = [dict(Usuario.SEXO_CHOICES).get(entry['sexo'], 'Não informado') for entry in sexo_counts]
+        sexo_data = [entry['count'] for entry in sexo_counts]
+
+        # 3. Gráfico de idade (barra)
+        idade_dict = {}
+        for u in usuarios_qs:
+            idade = u.idade  # Usando a propriedade idade aqui também
+            idade_dict[idade] = idade_dict.get(idade, 0) + 1
+
+        idade_chart_data = {
+            'labels': list(idade_dict.keys()),
+            'data': list(idade_dict.values())
+        }
+
+        # Passando os dados para o template
+        context['usuarios_data'] = json.dumps(usuarios_data)
+        context['sexo_data'] = json.dumps({
+            'labels': sexo_labels,
+            'data': sexo_data
+        })
+        context['idade_data'] = json.dumps(idade_chart_data)
+
+        return context
