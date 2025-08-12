@@ -51,13 +51,16 @@
 
 <body>
     <div class="container py-4">
-        <h1 class="text-center mb-4">📋 Minhas Tarefas</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="text-center mb-0">📋 Minhas Tarefas</h1>
+            <a href="{% url 'logout' %}" class="btn btn-outline-danger">Sair</a>
+        </div>
 
         <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#taskModal"
             onclick="openCreateModal()">+ Nova Tarefa</button>
 
         <div class="row g-3">
-            <!-- Exemplo de tarefa, você pode repetir/adaptar -->
+    
             <div class="col-md-4">
                 <div class="card task-card priority-media">
                     <div class="card-body">
@@ -102,16 +105,18 @@
                                 <p><strong>Prazo:</strong> {{ task.deadline|date:"d/m/Y" }}</p>
                                 <button class="btn btn-sm btn-warning"
                                     onclick="openEditModal('{{task.id}}')">Editar</button>
-                                <button class="btn btn-sm btn-danger"
-                                    onclick="deleteTask('{{task.id}}')">Excluir</button>
+                                {% with id=task.id %}
+                                <button class="btn btn-sm btn-danger" data-url="{% url 'task_delete' id %}"
+                                    onclick="window.location.href = this.dataset.url">Excluir</button>
+                                {% endwith %}
                             </div>
                         </div>
                     </div>
                     {% endfor%}
-                    <!-- ... outras tarefas ... -->
+        
                 </div>
             </div>
-            <!-- ... cria tarefa ... -->
+     
             <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog">
@@ -132,7 +137,7 @@
                     </form>
                 </div>
             </div>
-            <!-- atulizar -->
+    
             <div class="modal fade" id="updateTaskModal" tabindex="-1" aria-labelledby="updateTaskModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog">
@@ -161,20 +166,20 @@
 
                 function openCreateModal() {
                     const form = document.querySelector('#createTaskModal form');
-                    form.reset(); // limpa o formulário (opcional)
+                    form.reset(); 
 
-                    // Exibe o modal
+            
                     const modal = new bootstrap.Modal(document.getElementById('createTaskModal'));
                     modal.show();
                 }
 
                 function openEditModal(taskId) {
-                    // Ajusta a URL do form para enviar para o update da tarefa correta
+
                     const form = document.getElementById('updateTaskForm');
-                    const urlBase = "{% url 'task_update' 0 %}".slice(0, -2); // remove "0/"
+                    const urlBase = "{% url 'task_update' 0 %}".slice(0, -2);
                     form.action = urlBase + taskId + '/';
 
-                    // Exibe o modal
+
                     const modal = new bootstrap.Modal(document.getElementById('updateTaskModal'));
                     modal.show();
                 }
@@ -190,7 +195,7 @@
                     const deadline = document.getElementById('deadline').value;
 
                     if (editMode && editingCard) {
-                        // Atualizar a tarefa no cartão
+
                         editingCard.querySelector('.card-title').textContent = title;
                         editingCard.querySelector('.card-text').textContent = description;
 
@@ -201,17 +206,17 @@
                         editingCard.querySelector('p:nth-child(4)').innerHTML = `<strong>Status:</strong> ${status}`;
                         editingCard.querySelector('p:nth-child(5)').innerHTML = `<strong>Prazo:</strong> ${deadline.split('-').reverse().join('/')}`;
 
-                        // Ajustar classes de prioridade
+
                         editingCard.classList.remove('priority-baixa', 'priority-media', 'priority-alta');
                         editingCard.classList.add('priority-' + priority.toLowerCase());
 
-                        // Ajustar classes de status
+
                         editingCard.classList.remove('status-concluida', 'status-atrasada');
                         if (status === 'Concluída') editingCard.classList.add('status-concluida');
                         else if (status === 'Atrasada') editingCard.classList.add('status-atrasada');
 
                     } else {
-                        // Criar um novo cartão
+
                         const container = document.querySelector('.row.g-3');
                         const col = document.createElement('div');
                         col.className = 'col-md-4';
@@ -232,7 +237,7 @@
                         container.appendChild(col);
                     }
 
-                    // Fechar modal após salvar
+             
                     const modalEl = document.getElementById('taskModal');
                     const modal = bootstrap.Modal.getInstance(modalEl);
                     modal.hide();
@@ -242,6 +247,7 @@
                     if (confirm('Deseja realmente excluir esta tarefa?')) {
                         const cardCol = button.closest('.col-md-4');
                         cardCol.remove();
+
                     }
                 }
             </script>

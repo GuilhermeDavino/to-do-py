@@ -7,7 +7,7 @@ class UsuarioCreateForm(UserCreationForm):
         model = Usuario
         fields = [
             'email', 'nome', 'data_nascimento', 'sexo',
-            'endereco', 'cpf',  # Ignorando tipo_usuario
+            'endereco', 'cpf',  
             'password1', 'password2',
         ]
         widgets = {

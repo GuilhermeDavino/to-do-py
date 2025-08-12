@@ -6,11 +6,14 @@
     {% endblock %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title%} {% endblock%}</title>
+    <title>{% block title %}todo-list{% endblock %}</title>
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/styles/ag-grid.css" />
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/styles/ag-theme-alpine.css" />
 </head>
 <body>
     {% block body %}
 
-    {% endblock%}    
+    {% endblock%}
+    <script src="https://unpkg.com/ag-grid-community@30.2.0/dist/ag-grid-community.min.noStyle.js"></script>
 </body>
 </html>

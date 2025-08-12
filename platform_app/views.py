@@ -36,7 +36,7 @@ class ListTasks(LoginRequiredMixin, ListView):
 class TaskCreate(LoginRequiredMixin, CreateView):
     model = Task
     form_class = TaskForm
-    success_url = reverse_lazy('task_teste')
+    success_url = reverse_lazy('task_list')
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -64,14 +64,14 @@ class TaskUpdate(LoginRequiredMixin, View):
         task.priority = priority
 
         task.save()
-        return redirect('task_teste')
+        return redirect('task_list')
 
 
 class TaskDelete(LoginRequiredMixin, View):
     def get(self, request, id):
         task = get_object_or_404(Task, id=id, user=request.user)
         task.delete()
-        return redirect('task_teste')
+        return redirect('task_list')
 
 
 

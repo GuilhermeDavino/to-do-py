@@ -12,17 +12,16 @@ class Login(View):
         return render(request, 'login/login.html')
     
     def post(self, request):
-        username = request.POST.get('username')
+        email = request.POST.get('username')
         password = request.POST.get('password')
-        print(username + " " + password)
-        user = auth.authenticate(username=username, password=password)
-        print(user)
+        print(email)
+        print(password)
+
+        user = auth.authenticate(request, email=email, password=password)
         if not user:
-            print("not")
-            return redirect('/auth/logar')
+            return redirect('/auth/logar')  
         else:
             auth.login(request, user)
-            print("sucesso")
             return redirect('/tasks/listar-tarefas')
     
 
