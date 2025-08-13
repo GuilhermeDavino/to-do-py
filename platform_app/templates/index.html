@@ -50,19 +50,76 @@
 </head>
 
 <body>
-    <div class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="text-center mb-0">📋 Minhas Tarefas</h1>
-            <a href="{% url 'logout' %}" class="btn btn-outline-danger">Sair</a>
-        </div>
+    {% if user.is_superuser == 1 or user.is_staff == 1%}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="{% url 'task_list' %}">To-Do List</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <p class="nav-link text-primary fw-semibold">Olá {{usuario.nome}}, seja bem-vindo</p>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary fw-semibold" href="{% url 'task_list' %}">📋 Listar Tarefas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary fw-semibold" href="{% url 'perfil' %}">👤 Perfil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary fw-semibold" href="{% url 'gerenciamento' %}">⚙️
+                            Gerenciamento</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary fw-semibold" href="{% url 'usuario_dashboard' %}">📊
+                            Dashboard</a>
+                    </li>
+                    <li class="nav-item" style="margin-left: 10px; margin-top: 3px;">
+                        <a href="{% url 'logout' %}" class="btn btn-outline-danger">Sair</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% else %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="{% url 'task_list' %}">To-Do List</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <p class="nav-link text-primary fw-semibold">Olá {{usuario.nome}}, seja bem-vindo</p>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary fw-semibold" href="{% url 'task_list' %}">📋 Listar Tarefas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-primary fw-semibold" href="{% url 'perfil' %}">👤 Perfil</a>
+                    </li>
+                    <li class="nav-item" style="margin-left: 10px; margin-top: 3px;">
+                        <a href="{% url 'logout' %}" class="btn btn-outline-danger">Sair</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+    <div class="container py-4">
         <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#taskModal"
             onclick="openCreateModal()">+ Nova Tarefa</button>
-
         <div class="row g-3">
-    
+
             <div class="col-md-4">
-                <div class="card task-card priority-media">
+                <div class="card task-card priority-media status-atrasada">
                     <div class="card-body">
                         <h5 class="card-title">Apresentação do Projeto</h5>
                         <p class="card-text">Finalizar slides e enviar para equipe.</p>
@@ -78,11 +135,11 @@
             {% for task in tasks %}
             <div class="col-md-4">
                 {% if task.priority == "Alta" %}
-                <div class="card task-card priority-alta" id="task-{{ task.id }}">
+                <div class="card task-card priority-alta {{ task.status_css_class }}" id="task-{{ task.id }}">
                     {% elif task.priority == "Média" %}
-                    <div class="card task-card priority-media" id="task-{{ task.id }}">
+                    <div class="card task-card priority-media {{ task.status_css_class }}" id="task-{{ task.id }}">
                         {% elif task.priority == "Baixa" %}
-                        <div class="card task-card priority-baixa" id="task-{{ task.id }}">
+                        <div class="card task-card priority-baixa {{ task.status_css_class }}" id="task-{{ task.id }}">
                             {% endif %}
                             <div class="card-body">
                                 <h5 class="card-title">{{task.title}}</h5>
@@ -95,9 +152,9 @@
                                 <span class="badge bg-success">{{task.priority}}</span>
                                 {% endif %}
                                 {% if task.category == "T" %}
-                                <span class="badge bg-primary">{{task.task.get_category_display}}</span>
+                                <span class="badge bg-primary">{{task.get_category_display}}</span>
                                 {% elif task.category == "E" %}
-                                <span class="badge bg-info text-dark">{{task.task.get_category_display}}</span>
+                                <span class="badge bg-info text-dark">{{task.get_category_display}}</span>
                                 {% elif task.category == "P" %}
                                 <span class="badge bg-secondary">{{task.get_category_display}}</span>
                                 {% endif %}
@@ -113,10 +170,10 @@
                         </div>
                     </div>
                     {% endfor%}
-        
+
                 </div>
             </div>
-     
+
             <div class="modal fade" id="createTaskModal" tabindex="-1" aria-labelledby="createTaskModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog">
@@ -137,7 +194,7 @@
                     </form>
                 </div>
             </div>
-    
+
             <div class="modal fade" id="updateTaskModal" tabindex="-1" aria-labelledby="updateTaskModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog">
@@ -166,9 +223,9 @@
 
                 function openCreateModal() {
                     const form = document.querySelector('#createTaskModal form');
-                    form.reset(); 
+                    form.reset();
 
-            
+
                     const modal = new bootstrap.Modal(document.getElementById('createTaskModal'));
                     modal.show();
                 }
@@ -176,72 +233,15 @@
                 function openEditModal(taskId) {
 
                     const form = document.getElementById('updateTaskForm');
-                    const urlBase = "{% url 'task_update' 0 %}".slice(0, -2);
-                    form.action = urlBase + taskId + '/';
+                    const urlBase = "{% url 'task_update' 0 %}".replace("0", taskId);
+                    form.action = urlBase;
 
 
                     const modal = new bootstrap.Modal(document.getElementById('updateTaskModal'));
                     modal.show();
                 }
 
-                function submitTask(event) {
-                    event.preventDefault();
-
-                    const title = document.getElementById('title').value;
-                    const description = document.getElementById('description').value;
-                    const priority = document.getElementById('priority').value;
-                    const category = document.getElementById('category').value;
-                    const status = document.getElementById('status').value;
-                    const deadline = document.getElementById('deadline').value;
-
-                    if (editMode && editingCard) {
-
-                        editingCard.querySelector('.card-title').textContent = title;
-                        editingCard.querySelector('.card-text').textContent = description;
-
-                        const badges = editingCard.querySelectorAll('span.badge');
-                        badges[0].textContent = priority;
-                        badges[1].textContent = category;
-
-                        editingCard.querySelector('p:nth-child(4)').innerHTML = `<strong>Status:</strong> ${status}`;
-                        editingCard.querySelector('p:nth-child(5)').innerHTML = `<strong>Prazo:</strong> ${deadline.split('-').reverse().join('/')}`;
-
-
-                        editingCard.classList.remove('priority-baixa', 'priority-media', 'priority-alta');
-                        editingCard.classList.add('priority-' + priority.toLowerCase());
-
-
-                        editingCard.classList.remove('status-concluida', 'status-atrasada');
-                        if (status === 'Concluída') editingCard.classList.add('status-concluida');
-                        else if (status === 'Atrasada') editingCard.classList.add('status-atrasada');
-
-                    } else {
-
-                        const container = document.querySelector('.row.g-3');
-                        const col = document.createElement('div');
-                        col.className = 'col-md-4';
-                        col.innerHTML = `
-            <div class="card task-card priority-${priority.toLowerCase()} ${status === 'Concluída' ? 'status-concluida' : ''} ${status === 'Atrasada' ? 'status-atrasada' : ''}">
-                <div class="card-body">
-                    <h5 class="card-title">${title}</h5>
-                    <p class="card-text">${description}</p>
-                    <span class="badge bg-${priority === 'Alta' ? 'danger' : priority === 'Média' ? 'warning text-dark' : 'success'}">${priority}</span>
-                    <span class="badge bg-${category === 'Trabalho' ? 'primary' : category === 'Estudos' ? 'info text-dark' : 'secondary'}">${category}</span>
-                    <p class="mt-2"><strong>Status:</strong> ${status}</p>
-                    <p><strong>Prazo:</strong> ${deadline.split('-').reverse().join('/')}</p>
-                    <button class="btn btn-sm btn-warning" onclick="openEditModal(this)">Editar</button>
-                    <button class="btn btn-sm btn-danger" onclick="deleteTask(this)">Excluir</button>
-                </div>
-            </div>
-          `;
-                        container.appendChild(col);
-                    }
-
-             
-                    const modalEl = document.getElementById('taskModal');
-                    const modal = bootstrap.Modal.getInstance(modalEl);
-                    modal.hide();
-                }
+                
 
                 function deleteTask(button, taskId) {
                     if (confirm('Deseja realmente excluir esta tarefa?')) {

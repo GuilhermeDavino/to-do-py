@@ -41,9 +41,11 @@ class Usuario(AbstractUser):
 
     username = None 
     nome = models.CharField(max_length=30)
+    sobrenome = models.CharField(max_length=30, null=True)
     email = models.EmailField(unique=True)
     data_nascimento = models.DateField(default=timezone.now)
     sexo = models.CharField(max_length=1, choices=SEXO_CHOICES)
+    cep =  models.CharField(max_length=10, default="123456789")
     endereco = models.TextField(max_length=200)
     cpf = models.CharField(unique=True, max_length=16)
     tipo_usuario = models.CharField(max_length=1, choices=TIPO_USUARIO_CHOICES, default='C')

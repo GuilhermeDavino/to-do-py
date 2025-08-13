@@ -77,7 +77,7 @@ class UsuarioDeleteView(SuperUserRequiredMixin, DeleteView):
 
 
 
-class UsuarioDashBoardView(ListView):
+class UsuarioDashBoardView(SuperUserRequiredMixin, ListView):
     model = Usuario
     template_name = 'dashboard.html'
     context_object_name = 'usuarios'

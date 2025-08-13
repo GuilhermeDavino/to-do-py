@@ -6,26 +6,30 @@ class UsuarioCreateForm(UserCreationForm):
     class Meta:
         model = Usuario
         fields = [
-            'email', 'nome', 'data_nascimento', 'sexo',
-            'endereco', 'cpf',  
-            'password1', 'password2',
+            'email', 'nome', 'data_nascimento', 'sexo', 
+            'cep', 'endereco', 'cpf',  
+            'password1', 'password2'
         ]
         widgets = {
             'data_nascimento': forms.DateInput(attrs={'type': 'date'}),
             'sexo': forms.Select(),
             'endereco': forms.Textarea(attrs={'rows': 3}),
+            'cep': forms.Select(attrs={
+                'onchange': 'onChangeCep(this)',
+                'class': 'form-select'
+            }),
         }
 
 
 class UsuarioUpdateForm(forms.ModelForm):
     nova_senha = forms.CharField(
         label="Nova senha",
-        widget=forms.PasswordInput,
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
         required=False
     )
     confirmar_senha = forms.CharField(
         label="Confirmar nova senha",
-        widget=forms.PasswordInput,
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
         required=False
     )
 
@@ -36,9 +40,12 @@ class UsuarioUpdateForm(forms.ModelForm):
             'endereco', 'cpf',
         ]
         widgets = {
-            'data_nascimento': forms.DateInput(attrs={'type': 'date'}),
-            'sexo': forms.Select(),
-            'endereco': forms.Textarea(attrs={'rows': 3}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'data_nascimento': forms.DateInput(format= '%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
+            'sexo': forms.Select(attrs={'class': 'form-select'}),
+            'endereco': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'cpf': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
     def clean(self):
