@@ -58,6 +58,10 @@ class LogOut(View):
     def get(self, request):
         auth.logout(request)
         return redirect('/auth/logar')
+    
+
+def home(request):
+    return redirect('login')
 
 
 

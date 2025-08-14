@@ -6,6 +6,7 @@ from django.utils.decorators import method_decorator
 
 urlpatterns = [
    path('logar/', views.Login.as_view(), name='login'),
-   path('sair/', views.LogOut.as_view(), name='logout')
+   path('sair/', views.LogOut.as_view(), name='logout'),
+   path('', views.home)
 
 ]

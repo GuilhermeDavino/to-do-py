@@ -5,6 +5,8 @@ from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView,
 )
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+
+from platform_app.choices import SexoChoices
 from .models import Usuario
 from .forms import UsuarioCreateForm, UsuarioUpdateForm
 from datetime import date
@@ -100,7 +102,7 @@ class UsuarioDashBoardView(SuperUserRequiredMixin, ListView):
 
        
         sexo_counts = usuarios_qs.values('sexo').annotate(count=Count('sexo'))
-        sexo_labels = [dict(Usuario.SEXO_CHOICES).get(entry['sexo'], 'Não informado') for entry in sexo_counts]
+        sexo_labels = [SexoChoices(entry['sexo']).label if entry['sexo'] in SexoChoices.values else SexoChoices.NAO_INFORMADO.label for entry in sexo_counts]
         sexo_data = [entry['count'] for entry in sexo_counts]
 
         

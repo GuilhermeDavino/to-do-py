@@ -14,3 +14,14 @@ class CategoryChoices(models.TextChoices):
     TRABALHO = 'T', "Trabalho"
     ESTUDO = 'E', "Estudos",
     PESSOAL = 'P', "Pessoal"
+
+
+class SexoChoices(models.TextChoices):
+    MASCULINO = 'M', 'Masculino'
+    FEMININO = 'F', 'Feminino'
+    NAO_INFORMADO = 'N', 'Não informado'
+
+
+class TipoUsuarioChoices(models.TextChoices):
+    ADMIN = 'A', 'admin'
+    COMUN = 'C', 'Comun'

@@ -160,15 +160,42 @@
                                 {% endif %}
                                 <p class="mt-2"><strong>Status:</strong> {{task.get_status_display}}</p>
                                 <p><strong>Prazo:</strong> {{ task.deadline|date:"d/m/Y" }}</p>
-                                <button class="btn btn-sm btn-warning"
-                                    onclick="openEditModal('{{task.id}}')">Editar</button>
                                 {% with id=task.id %}
+                                <button class="btn btn-sm btn-success" data-url="{% url 'task_complete' id %}"
+                                    onclick="window.location.href = this.dataset.url">Concluir</button>
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#updateTaskModal{{ task.id }}">Editar</button>
                                 <button class="btn btn-sm btn-danger" data-url="{% url 'task_delete' id %}"
                                     onclick="window.location.href = this.dataset.url">Excluir</button>
                                 {% endwith %}
                             </div>
                         </div>
                     </div>
+                    {% for task, form in tasks_forms %}
+                    <!-- Modal para editar a tarefa -->
+                    <div class="modal fade" id="updateTaskModal{{ task.id }}" tabindex="-1"
+                        aria-labelledby="updateTaskModalLabel{{ task.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form method="post" action="{% url 'task_update' task.id %}" class="modal-content">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="updateTaskModalLabel{{ task.id }}">Editar Tarefa</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Fechar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {{ form.as_p }}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary">Atualizar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+
                     {% endfor%}
 
                 </div>
@@ -231,17 +258,14 @@
                 }
 
                 function openEditModal(taskId) {
-
                     const form = document.getElementById('updateTaskForm');
                     const urlBase = "{% url 'task_update' 0 %}".replace("0", taskId);
                     form.action = urlBase;
-
-
                     const modal = new bootstrap.Modal(document.getElementById('updateTaskModal'));
                     modal.show();
                 }
 
-                
+
 
                 function deleteTask(button, taskId) {
                     if (confirm('Deseja realmente excluir esta tarefa?')) {

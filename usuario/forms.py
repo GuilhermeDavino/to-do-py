@@ -14,9 +14,9 @@ class UsuarioCreateForm(UserCreationForm):
             'data_nascimento': forms.DateInput(attrs={'type': 'date'}),
             'sexo': forms.Select(),
             'endereco': forms.Textarea(attrs={'rows': 3}),
-            'cep': forms.Select(attrs={
+            'cep': forms.TextInput(attrs={
                 'onchange': 'onChangeCep(this)',
-                'class': 'form-select'
+                'class': 'form-control'
             }),
         }
 

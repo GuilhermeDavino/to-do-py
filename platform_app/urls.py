@@ -10,4 +10,5 @@ urlpatterns = [
     path('pendenciar-tarefa/<int:id>/', views.PendingTask.as_view(), name='task_pending'),
     path('listar-tarefas/', views.ListTasksView.as_view(), name='task_list'),
     path('perfil/', views.PerfilView.as_view(), name="perfil"),
+    path('json/<int:pk>', views.TaskDetailJsonView.as_view(), name='task_detail_json'),
 ]

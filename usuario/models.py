@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils import timezone
 from datetime import date
+from platform_app.choices import SexoChoices, TipoUsuarioChoices
 
 class UsuarioManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -28,27 +29,17 @@ class UsuarioManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class Usuario(AbstractUser):
-    SEXO_CHOICES = [
-        ('M', 'Masculino'),
-        ('F', 'Feminino'),
-        ('N', 'Não informado'),
-    ] 
-
-    TIPO_USUARIO_CHOICES = [
-        ('A', 'admin'),
-        ('C', 'Comun'),
-    ]
 
     username = None 
     nome = models.CharField(max_length=30)
     sobrenome = models.CharField(max_length=30, null=True)
     email = models.EmailField(unique=True)
     data_nascimento = models.DateField(default=timezone.now)
-    sexo = models.CharField(max_length=1, choices=SEXO_CHOICES)
+    sexo = models.CharField(max_length=1, choices=SexoChoices.choices, default=SexoChoices.NAO_INFORMADO)
     cep =  models.CharField(max_length=10, default="123456789")
     endereco = models.TextField(max_length=200)
     cpf = models.CharField(unique=True, max_length=16)
-    tipo_usuario = models.CharField(max_length=1, choices=TIPO_USUARIO_CHOICES, default='C')
+    tipo_usuario = models.CharField(max_length=1, choices=TipoUsuarioChoices.choices, default=TipoUsuarioChoices.COMUN)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['nome', 'data_nascimento', 'sexo', 'endereco', 'cpf', 'tipo_usuario']

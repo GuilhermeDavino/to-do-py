@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
@@ -16,6 +16,7 @@ class ListTasksView(ListView):
     template_name = 'index.html'
     context_object_name = 'tasks'
     create_form = TaskForm
+    update_form = TaskUpdateForm
 
     def get_queryset(self):
         hoje = timezone.now().date()
@@ -30,11 +31,15 @@ class ListTasksView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        tasks = context['tasks']
+        tasks_forms = []
+        for task in tasks:
+            form = TaskUpdateForm(instance=task)
+            tasks_forms.append((task, form))
+        context['tasks_forms'] = tasks_forms
         context['create_form'] = TaskForm()
-        context['update_form'] = TaskForm()
-        context['usuario'] = self.request.user
+        context['update_form'] = TaskUpdateForm()
         return context
-
 
 
 class TaskCreate(LoginRequiredMixin, CreateView):
@@ -91,6 +96,20 @@ class PerfilView(LoginRequiredMixin, UpdateView):
 
 def LogadoView(request):
     return HttpResponse(request.user.id)
+
+
+class TaskDetailJsonView(View):
+    def get(self, request, pk):
+        task = get_object_or_404(Task, pk=pk, user=request.user)
+        data = {
+            'title': task.title,
+            'description': task.description,
+            'status': task.status,
+            'priority': task.priority,
+            'category': task.category,
+            'deadline': task.deadline.strftime('%Y-%m-%d'),
+        }
+        return JsonResponse(data)
 
 
 
