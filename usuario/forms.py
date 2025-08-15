@@ -21,6 +21,12 @@ class UsuarioCreateForm(UserCreationForm):
         }
 
 
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            for field in self.fields.values(): # type: ignore
+                field.widget.attrs['class'] = 'form-control'
+
+
 class UsuarioUpdateForm(forms.ModelForm):
     nova_senha = forms.CharField(
         label="Nova senha",
@@ -36,7 +42,7 @@ class UsuarioUpdateForm(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = [
-            'email', 'nome', 'data_nascimento', 'sexo',
+            'email', 'nome', 'data_nascimento', 'sexo', 'cep',
             'endereco', 'cpf',
         ]
         widgets = {
@@ -44,6 +50,10 @@ class UsuarioUpdateForm(forms.ModelForm):
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
             'data_nascimento': forms.DateInput(format= '%Y-%m-%d', attrs={'type': 'date', 'class': 'form-control'}),
             'sexo': forms.Select(attrs={'class': 'form-select'}),
+            'cep': forms.TextInput(attrs={
+                'onchange': 'onChangeCep(this)',
+                'class': 'form-control'
+            }),
             'endereco': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
             'cpf': forms.TextInput(attrs={'class': 'form-control'}),
         }

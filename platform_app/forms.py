@@ -80,7 +80,7 @@ class UsuarioUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Usuario
-        fields = ['email', 'nome', 'data_nascimento', 'sexo', 'endereco', 'cpf']
+        fields = ['email', 'nome', 'data_nascimento', 'sexo', 'cep', 'endereco', 'cpf']
         widgets = {
             'email': forms.EmailInput(attrs={
                 'class': 'form-control',
@@ -99,6 +99,10 @@ class UsuarioUpdateForm(forms.ModelForm):
             ),
             'sexo': forms.Select(attrs={
                 'class': 'form-select'
+            }),
+            'cep': forms.TextInput(attrs={
+                'onchange': 'onChangeCep(this)',
+                'class': 'form-control'
             }),
             'endereco': forms.Textarea(attrs={
                 'class': 'form-control',

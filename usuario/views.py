@@ -44,6 +44,7 @@ class UsuarioListView(SuperUserRequiredMixin, ListView):
             usuarios_forms.append((usuario, form))
         context['usuarios_forms'] = usuarios_forms
         context['form'] = UsuarioCreateForm()
+        context['usuario'] = self.request.user
         return context
 
 

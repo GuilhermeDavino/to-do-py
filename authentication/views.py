@@ -2,6 +2,8 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.contrib.auth.models import User
 from django.contrib import auth
+from django.contrib import messages
+from django.contrib.messages import constants 
 # Create your views here.
 
 class Login(View):
@@ -19,9 +21,11 @@ class Login(View):
 
         user = auth.authenticate(request, email=email, password=password)
         if not user:
+            messages.add_message(request, constants.ERROR, 'Usuário ou senha inválidos!')
             return redirect('/auth/logar')  
         else:
             auth.login(request, user)
+            messages.add_message(request, constants.SUCCESS, 'Login realizado com sucesso!')
             return redirect('/tasks/listar-tarefas')
     
 

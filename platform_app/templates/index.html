@@ -118,20 +118,7 @@
             onclick="openCreateModal()">+ Nova Tarefa</button>
         <div class="row g-3">
 
-            <div class="col-md-4">
-                <div class="card task-card priority-media status-atrasada">
-                    <div class="card-body">
-                        <h5 class="card-title">Apresentação do Projeto</h5>
-                        <p class="card-text">Finalizar slides e enviar para equipe.</p>
-                        <span class="badge bg-danger">Alta</span>
-                        <span class="badge bg-primary">Trabalho</span>
-                        <p class="mt-2"><strong>Status:</strong> Pendente</p>
-                        <p><strong>Prazo:</strong> 10/08/2025</p>
-                        <button class="btn btn-sm btn-warning" onclick="openEditModal()">Editar</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteTask(this)">Excluir</button>
-                    </div>
-                </div>
-            </div>
+            
             {% for task in tasks %}
             <div class="col-md-4">
                 {% if task.priority == "Alta" %}
@@ -170,8 +157,13 @@
                             </div>
                         </div>
                     </div>
+                    
+                    {%empty%}
+                    <h1>Não há tarefas</h1>
+
+
+                    {% endfor%}
                     {% for task, form in tasks_forms %}
-                    <!-- Modal para editar a tarefa -->
                     <div class="modal fade" id="updateTaskModal{{ task.id }}" tabindex="-1"
                         aria-labelledby="updateTaskModalLabel{{ task.id }}" aria-hidden="true">
                         <div class="modal-dialog">
@@ -194,9 +186,6 @@
                         </div>
                     </div>
                     {% endfor %}
-
-
-                    {% endfor%}
 
                 </div>
             </div>

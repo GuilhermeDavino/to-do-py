@@ -25,7 +25,7 @@ class ListTasksView(ListView):
         for task in qs:
             if task.deadline < hoje and task.status != 'C' and task.status != 'A':
                 task.status = 'A'
-                task.save()
+                task.save() 
         return qs
     
 
@@ -39,6 +39,7 @@ class ListTasksView(ListView):
         context['tasks_forms'] = tasks_forms
         context['create_form'] = TaskForm()
         context['update_form'] = TaskUpdateForm()
+        context['usuario'] = self.request.user
         return context
 
 

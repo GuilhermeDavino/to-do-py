@@ -7,10 +7,9 @@
     <title>Meu Perfil</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
 <body class="bg-light">
     {% if user.is_superuser == 1 or user.is_staff == 1%}
-        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm mb-4">
         <div class="container">
             <a class="navbar-brand fw-bold text-primary" href="{% url 'task_list' %}">To-Do List</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -30,10 +29,12 @@
                         <a class="nav-link text-primary fw-semibold" href="{% url 'perfil' %}">👤 Perfil</a>
                     </li>
                     <li class="nav-item">
-                         <a class="nav-link text-primary fw-semibold" href="{% url 'gerenciamento' %}">⚙️ Gerenciamento</a>
+                        <a class="nav-link text-primary fw-semibold" href="{% url 'gerenciamento' %}">⚙️
+                            Gerenciamento</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-primary fw-semibold" href="{% url 'usuario_dashboard' %}">📊 Dashboard</a>
+                        <a class="nav-link text-primary fw-semibold" href="{% url 'usuario_dashboard' %}">📊
+                            Dashboard</a>
                     </li>
                     <li class="nav-item" style="margin-left: 10px; margin-top: 3px;">
                         <a href="{% url 'logout' %}" class="btn btn-outline-danger">Sair</a>
@@ -96,6 +97,34 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function onChangeCep(input) {
+            const cep = input.value.replace(/\D/g, '');
+            if (cep.length !== 8) {
+                alert('CEP inválido. Deve conter 8 dígitos.');
+                return;
+            }
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erro) {
+                        alert('CEP não encontrado.');
+                        document.getElementById('id_endereco').value = '';
+                        return;
+                    }
+                    const endereco = `${data.logradouro}, número, complemento, ${data.bairro}, ${data.localidade} - ${data.uf}`;
+                    document.getElementById('id_endereco').value = endereco;
+                })
+                .catch(() => alert('Erro ao buscar o CEP.'));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const cepInput = document.getElementById('id_cep');
+            if (cepInput) {
+                cepInput.addEventListener('change', () => onChangeCep(cepInput));
+            }
+        });
+    </script>
 </body>
 
 </html>
